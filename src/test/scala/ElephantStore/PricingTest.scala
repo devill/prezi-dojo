@@ -1,8 +1,22 @@
 package ElephantStore
 
+import ElephantStore.Core.{ItemDto, Pricing, StateDto, StateRepository}
 import org.specs2.mutable._
 
+
+class StateTestRepository extends StateRepository {
+  def get(stateCode:String): Option[StateDto] = {
+    stateCode match {
+      case "CA" => StateDto(stateCode, Some(8.25))
+      case "UT" => StateDto(stateCode, Some(6.85))
+      case _ => None
+    }
+  }
+}
+
 class PricingTest extends SpecificationWithJUnit {
+  implicit val stateRepository:StateRepository = new StateTestRepository
+
   "get price" should {
     "return zero for no items at all" in {
       getTotalPrice(List.empty) === 0
@@ -44,9 +58,10 @@ class PricingTest extends SpecificationWithJUnit {
 
     "return the price with tax for all known states" in {
       getPriceWithTax(List(ItemDto(1, 1, 1)), "CA") === Some(1.0825)
-      getPriceWithTax(List(ItemDto(1, 1, 1)), "NV") === Some(1.0800)
-      getPriceWithTax(List(ItemDto(1, 1, 1)), "TX") === Some(1.0625)
-      getPriceWithTax(List(ItemDto(1, 1, 1)), "AL") === Some(1.0400)
+    }
+
+    "return none for price with tax if state is not found" in {
+      getPriceWithTax(List(ItemDto(1, 1, 1)), "NOT A STATE") === None
     }
   }
 

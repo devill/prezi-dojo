@@ -1,12 +1,12 @@
-package ElephantStore
+package ElephantStore.Core
 
-class Pricing {
+class Pricing(implicit val stateRepository: StateRepository) {
   def get(itemList: List[ItemDto], stateCode: String): PricingDto = {
     val totalPrice = this.totalPrice(itemList)
 
     PricingDto(
       totalPrice,
-      StateDto.get(stateCode).map { state => totalPrice * (1 + state.tax/100) }
+      stateRepository.get(stateCode).map { state => totalPrice * (1 + state.tax/100) }
     )
   }
 
