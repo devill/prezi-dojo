@@ -1,29 +1,24 @@
 package ElephantStore
 
-// case class State(val stateCode: String, stateName: String, lone)
-// case class StateTax (val state: State, val tax: Double)
+case class StateDto(
+                     code:String,
+                     tax:Double
+                )
 
-object StateTax {
+object StateDto {
+    def get(stateCode:String): Option[StateDto] = {
+      val tax = stateCode match {
+        case "CA" => Some(8.25)
+        case "NV" => Some(8.00)
+        case "TX" => Some(6.25)
+        case "AL" => Some(4.00)
+        case "UT" => Some(6.85)
+        case _ => None
+      }
 
-}
-
-sealed trait State {
-  val stateCode: String
-  val tax: Double
-}
-
-object State {
-  case object CA extends State {
-    override val stateCode: String = "CA"
-  }
-
-  case object UT extends State {
-    override val stateCode: String = "UT"
-  }
-
-  def parse(strStateCode: String): Option[State] =
-    strStateCode match {
-      case "CA" => Some(CA)
-      case _ => None
+      tax.map { x =>
+        StateDto(stateCode, x)
+      }
     }
 }
+

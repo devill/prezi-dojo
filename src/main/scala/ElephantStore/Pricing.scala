@@ -6,7 +6,7 @@ class Pricing {
 
     PricingDto(
       totalPrice,
-      totalPrice * (if(stateCode == "CA") 1.0825 else 1.0685)
+      StateDto.get(stateCode).map { state => totalPrice * (1 + state.tax/100) }
     )
   }
 
